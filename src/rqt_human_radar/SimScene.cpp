@@ -261,42 +261,10 @@ void SimScene::updatePersons()
         node_->get_logger(), "New person %s detected.",
         person->id().c_str());
 
-      // if the person is currently anonymous, make it known
-
-      // first, wait for the 'anonymous' flag to be set
-      while (person->anonymous() == std::nullopt) {
-        std::this_thread::sleep_for(10ms);
-      }
-      if (*person->anonymous()) {
-        RCLCPP_INFO(
-          node_->get_logger(),
-          "Person %s is anonymous. Creating a new, non-anonymous person.",
-          person->id().c_str());
-
-        rclcpp::Publisher<hri_msgs::msg::IdsMatch>::SharedPtr matcher_pub_;
-        matcher_pub_ = node_->create_publisher<hri_msgs::msg::IdsMatch>(
-          "/humans/candidate_matches", 10);
-        hri_msgs::msg::IdsMatch match;
-
-        // we know by construction (cf RadarCanvas) that the person has either
-        // a face or a body
-        if (person->face()) {
-          match.id1 = person->face()->id();
-          match.id1_type = hri_msgs::msg::IdsMatch::FACE;
-        } else {
-          match.id1 = person->body()->id();
-          match.id1_type = hri_msgs::msg::IdsMatch::BODY;
-        }
-        match.id2 = "person_" + match.id1;
-        match.id2_type = hri_msgs::msg::IdsMatch::PERSON;
-        match.confidence = 1.0;
-        matcher_pub_->publish(match);
-      } else {
-        auto personItem =
-          new RemotePersonItem(node_, person, package_, "base_link");
-        persons_[person->id()] = personItem;
-        addItem(personItem);
-      }
+      auto personItem =
+        new RemotePersonItem(node_, person, package_, "base_link");
+      persons_[person->id()] = personItem;
+      addItem(personItem);
 
       it = persons_backlog_.erase(it);
 
