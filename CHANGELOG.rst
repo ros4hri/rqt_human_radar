@@ -2,6 +2,12 @@
 Changelog for package rqt_human_radar
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* do not automatically create non-anonymous persons
+  This was breaking expectations when running eg on the robot where hri_face_identification was running
+* Contributors: Séverin Lemaignan
+
 2.4.0 (2024-12-09)
 ------------------
 * svg template: escape parantheses in RDF class names
