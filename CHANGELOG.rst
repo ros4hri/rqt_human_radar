@@ -2,8 +2,8 @@
 Changelog for package rqt_human_radar
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+2.5.1 (2025-02-19)
+------------------
 * Revert "svg template: escape parantheses in RDF class names"
   This reverts commit 4cc2197ed8bd3f76e0008bafe6e2c6bbfbc20a24.
   The escaping issue has been solved in knowledge_core directly
