@@ -76,6 +76,10 @@ void SimItem::paint(
   painter->restore();
 
   painter->restore();
+
+  //// paint in red the edges of the bounding box
+  // painter->setPen(QPen(Qt::red, 0.01 * SimScene::pixelsPerMeter));
+  // painter->drawRect(boundingRect());
 }
 
 void SimItem::setPhysicalWidth(double size)
