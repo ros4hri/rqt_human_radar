@@ -97,12 +97,10 @@ LocalObjectItem::~LocalObjectItem()
 void LocalObjectItem::setStatic()
 {
   setFlag(QGraphicsItem::ItemIsMovable, false);
-
 }
 
 void LocalObjectItem::contextMenuEvent(QGraphicsSceneContextMenuEvent * event)
 {
-
   if (getClassname() == ORO_ZONE_OF_INTEREST) {
     return;
   }

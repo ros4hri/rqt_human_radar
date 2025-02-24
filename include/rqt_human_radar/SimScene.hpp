@@ -20,6 +20,8 @@
 #include <set>
 #include <vector>
 #include <string>
+#include <tuple>
+#include <utility>
 #include <rclcpp/rclcpp.hpp>
 #include <hri/hri.hpp>
 #include <std_msgs/msg/string.hpp>

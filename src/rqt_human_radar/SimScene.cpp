@@ -91,11 +91,9 @@ void SimScene::enableSimulation(bool state)
 
 void SimScene::updateSpatialRelations()
 {
-
   std::set<Triple> triples;
 
-  for (const auto item: items()) {
-
+  for (const auto item : items()) {
     LocalObjectItem * object = dynamic_cast<LocalObjectItem *>(item);
     if (!object) {
       continue;
@@ -136,7 +134,6 @@ void SimScene::updateSpatialRelations()
         triples.insert({above_object->getId(), IS_ON, object->getId()});
       }
     }
-
   }
 
   std::set<Triple> facts_to_add, facts_to_remove;
@@ -445,20 +442,15 @@ void SimScene::updatePersons()
 
 bool SimScene::isAbove(const QGraphicsItem * target_object, const QGraphicsItem * qobject) const
 {
-
   // first check the z-value
   if (target_object->zValue() < qobject->zValue()) {
     return false;
   } else if (target_object->zValue() > qobject->zValue()) {
     return true;
-  }
-  // if the z-value are the same, check the insertion order
-  else {
+  } else {  // if the z-value are the same, check the insertion order
     return items().indexOf(const_cast<QGraphicsItem *>(target_object)) <
            items().indexOf(const_cast<QGraphicsItem *>(qobject));
-
   }
-
 }
 
 void SimScene::onTrackedPerson(hri::ConstPersonPtr person)

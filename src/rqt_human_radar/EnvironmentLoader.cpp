@@ -50,7 +50,8 @@ void EnvironmentLoader::loadMap(
   // - are direct children of the SVG group with inkscape:label='static_objects'
   // - whose own inkscape:label does not start with '_'
 
-  // get elementsByTag 'g' and only keep the one that has the label inkscape:label='static_objects' or 'zones'
+  // get elementsByTag 'g' and only keep the one that has the label
+  // inkscape:label='static_objects', 'zones' or 'walls'
   QDomElement static_objects;
   QDomElement zones_of_interest;
   QDomElement walls;
@@ -72,7 +73,6 @@ void EnvironmentLoader::loadMap(
   loadElements(node, static_objects, scene, ORO_OBJECT);
   loadElements(node, zones_of_interest, scene, ORO_ZONE_OF_INTEREST);
   loadElements(node, walls, scene, "");
-
 }
 
 void EnvironmentLoader::loadElements(
@@ -80,7 +80,6 @@ void EnvironmentLoader::loadElements(
   QDomElement & root, QGraphicsScene * scene,
   const std::string & default_class)
 {
-
   auto viewBox = renderer_.viewBoxF();
   // (0,0) is the top-left corner of the SVG
   // we assume landscape orientation, with the robot at the middle of X=0 axis
@@ -111,14 +110,6 @@ void EnvironmentLoader::loadElements(
         // if not default case, assume these SVG elements are
         // purely visual, and do not have any semantic meaning
         // in the simulation
-        //auto svg_item = new QGraphicsSvgItem();
-        //svg_item->setSharedRenderer(&renderer_);
-        //svg_item->setElementId(elementId);
-        //svg_item->setZValue(100);
-        //scene->addItem(svg_item);
-        //svg_item->setPos(
-        //  (bounds.center().x() - xOrigin) / 1000 * SimScene::pixelsPerMeter,
-        //  (bounds.center().y() - yOrigin) / 1000 * SimScene::pixelsPerMeter);
         auto svg_item = new SimItem(node);
         svg_item->setSharedRenderer(&renderer_);
         svg_item->setElementId(elementId);
