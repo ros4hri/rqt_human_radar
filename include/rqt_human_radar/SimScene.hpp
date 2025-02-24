@@ -21,12 +21,18 @@
 #include <string>
 #include <rclcpp/rclcpp.hpp>
 #include <hri/hri.hpp>
+#include <std_msgs/msg/string.hpp>
 
 #include "rqt_human_radar/RemotePersonItem.hpp"
 #include "rqt_human_radar/concurrent_queue.hpp"
 
 namespace rqt_human_radar
 {
+
+typedef std::tuple<std::string, std::string, std::string> Triple;
+const std::string isOn = "isOn";
+const std::string isIn = "isIn";
+
 class SimScene : public QGraphicsScene
 {
   Q_OBJECT
@@ -58,6 +64,12 @@ public slots:
     update();
   }
 
+  /** Compute the spatial relations of all objects and publish
+   * accordingly updated facts to the knowledge base.
+   */
+  void updateSpatialRelations();
+
+
   void clearPersons();
   void clearObjects();
 
@@ -70,11 +82,28 @@ protected:
 private:
   void updatePersons();
 
+  /** Takes an object ID as input and returns two lists of objects:
+   * - first, the list of objects *below* the object's bounding box
+   * - second, the list of objects *above* the object's bounding box
+   */
+  std::pair<std::vector<std::string>,
+    std::vector<std::string>> getIntersectingObjects(std::string objectID) const;
+
+  /** returns true if the target_object is visually above the qobject in the Qt
+   * Graphics scene.
+   */
+  bool isAbove(const QGraphicsItem * target_object, const QGraphicsItem * qobject) const;
+
   void onTrackedPerson(hri::ConstPersonPtr person);
 
   void onTrackedPersonLost(hri::ID id);
 
   rclcpp::Node::SharedPtr node_;
+  rclcpp::Publisher<std_msgs::msg::String>::SharedPtr kb_add_pub_;
+  rclcpp::Publisher<std_msgs::msg::String>::SharedPtr kb_remove_pub_;
+
+  std::set<Triple> spatial_relations;
+
   std::shared_ptr<hri::HRIListener> hriListener_;
 
   std::string package_;

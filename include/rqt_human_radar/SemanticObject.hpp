@@ -44,7 +44,9 @@ public:
   ~SemanticObject();
 
   void addProperty(const std::string & property, const std::string & value);
+  void addTriple(const Triple & triple);
   void removeProperty(const std::string & property, const std::string & value);
+  void removeTriple(const Triple & triple);
 
   std::vector<Triple> getStaticTriples() const {return static_triples_;}
   void updateStaticTriples(const std::vector<Triple> & triples);
@@ -55,14 +57,14 @@ public:
   std::string getName() const {return name_;}
   std::string getClassname() const {return classname_;}
 
+  static std_msgs::msg::String toMsg(const Triple & triple);
+
 protected:
   std::string name_;
   std::string classname_;
   std::string id_;
 
 private:
-  static std_msgs::msg::String toMsg(const Triple & triple);
-
   std::vector<Triple> static_triples_;
 
   rclcpp::Node::SharedPtr node_;

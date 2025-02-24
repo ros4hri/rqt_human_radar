@@ -77,6 +77,11 @@ void SemanticObject::addProperty(
   kb_add_pub_->publish(msg);
 }
 
+void SemanticObject::addTriple(const Triple & triple)
+{
+  kb_add_pub_->publish(toMsg(triple));
+}
+
 void SemanticObject::removeProperty(
   const std::string & property,
   const std::string & value)
@@ -85,6 +90,11 @@ void SemanticObject::removeProperty(
   msg.data = id_ + " " + property + " " + value;
 
   kb_remove_pub_->publish(msg);
+}
+
+void SemanticObject::removeTriple(const Triple & triple)
+{
+  kb_remove_pub_->publish(toMsg(triple));
 }
 
 std_msgs::msg::String SemanticObject::toMsg(const Triple & triple)

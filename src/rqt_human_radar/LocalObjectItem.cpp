@@ -116,8 +116,10 @@ void LocalObjectItem::contextMenuEvent(QGraphicsSceneContextMenuEvent * event)
     }
   } else if (selectedAction == upAction) {
     this->setZValue(this->zValue() + 1);
+    dynamic_cast<SimScene *>(scene())->updateSpatialRelations();
   } else if (selectedAction == downAction) {
     this->setZValue(this->zValue() - 1);
+    dynamic_cast<SimScene *>(scene())->updateSpatialRelations();
   } else if (selectedAction == deleteAction) {
     scene()->removeItem(this);
     delete this;
@@ -145,6 +147,14 @@ void LocalObjectItem::mouseMoveEvent(QGraphicsSceneMouseEvent * event)
   QGraphicsSvgItem::mouseMoveEvent(event);
   scene()->update();
 }
+
+void LocalObjectItem::mouseReleaseEvent(QGraphicsSceneMouseEvent * event)
+{
+  QGraphicsSvgItem::mouseReleaseEvent(event);
+
+  dynamic_cast<SimScene *>(scene())->updateSpatialRelations();
+}
+
 
 void LocalObjectItem::moveTo(const geometry_msgs::msg::PoseStamped::SharedPtr new_pos)
 {

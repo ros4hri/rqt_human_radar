@@ -34,6 +34,9 @@
 namespace rqt_human_radar
 {
 
+typedef std::vector<std::string> ObjectList;
+
+
 class LocalObjectItem : public SimItem, public SemanticObject
 {
   Q_OBJECT
@@ -62,6 +65,7 @@ public:
 protected:
   void contextMenuEvent(QGraphicsSceneContextMenuEvent * event) override;
   void mouseMoveEvent(QGraphicsSceneMouseEvent * event) override;
+  void mouseReleaseEvent(QGraphicsSceneMouseEvent * event) override;
 
 private:
   void init();

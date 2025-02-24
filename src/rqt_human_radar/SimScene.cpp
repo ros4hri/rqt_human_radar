@@ -16,6 +16,7 @@
 #include <QGraphicsSceneContextMenuEvent>
 #include <QMenu>
 #include <QPainter>
+#include <algorithm>
 
 #include <ament_index_cpp/get_package_share_directory.hpp>
 #include <hri_msgs/msg/ids_list.hpp>
@@ -24,6 +25,8 @@
 #include "rqt_human_radar/LocalObjectItem.hpp"
 #include "rqt_human_radar/LocalPersonItem.hpp"
 #include "rqt_human_radar/RemoteObjectItem.hpp"
+
+#include "rqt_human_radar/SemanticObject.hpp"
 
 using namespace std::chrono_literals;
 
@@ -65,6 +68,11 @@ SimScene::SimScene(rclcpp::Node::SharedPtr node)
   addItem(robotItem);
   robotItem->setPhysicalWidth(0.2);  // 20cm
 
+  kb_add_pub_ =
+    node_->create_publisher<std_msgs::msg::String>("/kb/add_fact", 10);
+  kb_remove_pub_ =
+    node_->create_publisher<std_msgs::msg::String>("/kb/remove_fact", 10);
+
 
   updateTimer_ = new QTimer(this);
   connect(updateTimer_, &QTimer::timeout, this, &SimScene::updatePersons);
@@ -80,6 +88,130 @@ void SimScene::enableSimulation(bool state)
     clearObjects();
   }
 }
+
+void SimScene::updateSpatialRelations()
+{
+
+  std::set<Triple> triples;
+
+  for (const auto item: items()) {
+
+    LocalObjectItem * object = dynamic_cast<LocalObjectItem *>(item);
+    if (!object) {
+      continue;
+    }
+
+    ObjectList below, above;
+    std::tie(below, above) = getIntersectingObjects(object->getId());
+
+
+    // iterate over all objects below this object
+    // - if the object is already in _objects_below_, do nothing
+    // - if the object is not in _objects_below_, add it to _objects_below_
+    // and addProperty("isOn", object)
+    // - if the object is in _objects_above_ but not in below, remove it from
+    // _objects_above_ and removeProperty("isOn", object)
+    //
+    // Same for objects above this object
+
+
+    for (const auto & below_object : below) {
+      triples.insert({object->getId(), isOn, below_object});
+    }
+
+    for (const auto & above_object : above) {
+      triples.insert({above_object, isOn, object->getId()});
+    }
+
+  }
+
+  std::set<Triple> facts_to_add, facts_to_remove;
+
+  // new facts: triples - spatial_relations
+  std::set_difference(
+    triples.begin(), triples.end(), spatial_relations.begin(), spatial_relations.end(),
+    std::inserter(facts_to_add, facts_to_add.begin()));
+
+  // removed facts: spatial_relations - triples
+  std::set_difference(
+    spatial_relations.begin(), spatial_relations.end(), triples.begin(), triples.end(),
+    std::inserter(facts_to_remove, facts_to_remove.begin()));
+
+
+  // finally, update the knowledge base
+  for (const auto & triple : facts_to_remove) {
+    kb_remove_pub_->publish(SemanticObject::toMsg(triple));
+  }
+  for (const auto & triple : facts_to_add) {
+    kb_add_pub_->publish(SemanticObject::toMsg(triple));
+  }
+
+  spatial_relations = triples;
+}
+
+std::pair<std::vector<std::string>,
+  std::vector<std::string>> SimScene::getIntersectingObjects(std::string objectID) const
+{
+  std::vector<std::string> underObjects;
+  std::vector<std::string> aboveObjects;
+
+  QRectF target_object_rect;
+  SimItem * target_object = nullptr;
+
+  // Retrieve the object whose getIt() matches the input objectID
+  for (auto item : items()) {
+    auto sem_object = dynamic_cast<SemanticObject *>(item);
+    if (!sem_object) {
+      continue;
+    }
+
+    if (sem_object->getId() == objectID) {
+      target_object = dynamic_cast<SimItem *>(item);
+      if (target_object) {
+        target_object_rect =
+          target_object->mapToScene(target_object->boundingRect()).boundingRect();
+        break;
+      }
+    }
+  }
+
+  if (target_object_rect.isNull()) {
+    return std::make_pair(underObjects, aboveObjects);
+  }
+
+  // Iterate over all objects in the scene that are both SemanticObjects and SimItems
+  for (auto item : items()) {
+    auto qobject = dynamic_cast<SimItem *>(item);
+    if (!qobject) {
+      continue;
+    }
+
+    // Skip the object itself
+    if (qobject == target_object) {
+      continue;
+    }
+
+    auto object_rect = qobject->mapToScene(qobject->boundingRect()).boundingRect();
+
+    auto sem_object = dynamic_cast<SemanticObject *>(item);
+    if (!sem_object) {
+      continue;
+    }
+
+    // Check if the bounding boxes intersect
+    if (target_object_rect.intersects(object_rect)) {
+      if (isAbove(qobject, target_object)) {
+        aboveObjects.push_back(sem_object->getId());
+      } else {
+        underObjects.push_back(sem_object->getId());
+      }
+    }
+  }
+
+  return std::make_pair(underObjects, aboveObjects);
+}
+
+
 void SimScene::clearPersons()
 {
   QList<QGraphicsItem *> itemsInScene = items();
@@ -189,10 +321,10 @@ void SimScene::contextMenuEvent(QGraphicsSceneContextMenuEvent * event)
     return;
   }
 
-  // Otherwise, show the scene's context menu
+// Otherwise, show the scene's context menu
   QMenu menu;
 
-  // first, add an entry to add a human
+// first, add an entry to add a human
   auto human_action = new QAction(
     QIcon((package_ + "/res/icons/Agent.svg").c_str()), "Add human", this);
   connect(
@@ -207,8 +339,8 @@ void SimScene::contextMenuEvent(QGraphicsSceneContextMenuEvent * event)
   menu.addAction(human_action);
   menu.addSeparator();
 
-  // then, add objects
-  // (user-facing name, OWL class name, icon path)
+// then, add objects
+// (user-facing name, OWL class name, icon path)
   const std::vector<std::tuple<std::string, std::string, std::string>> OBJECTS{
     {"book", "dbr:Book", package_ + "/res/icons/book-open-variant.svg"},
     {"cup", "dbr:Cup", package_ + "/res/icons/cup-water.svg"},
@@ -235,6 +367,9 @@ void SimScene::contextMenuEvent(QGraphicsSceneContextMenuEvent * event)
 
         // Add the item to the scene
         addItem(localItem);
+
+        // Update the spatial relations
+        updateSpatialRelations();
       });
     menu.addAction(action);
   }
@@ -293,6 +428,24 @@ void SimScene::updatePersons()
         id.c_str());
     }
   }
+}
+
+bool SimScene::isAbove(const QGraphicsItem * target_object, const QGraphicsItem * qobject) const
+{
+
+  // first check the z-value
+  if (target_object->zValue() < qobject->zValue()) {
+    return false;
+  } else if (target_object->zValue() > qobject->zValue()) {
+    return true;
+  }
+  // if the z-value are the same, check the insertion order
+  else {
+    return items().indexOf(const_cast<QGraphicsItem *>(target_object)) <
+           items().indexOf(const_cast<QGraphicsItem *>(qobject));
+
+  }
+
 }
 
 void SimScene::onTrackedPerson(hri::ConstPersonPtr person)
