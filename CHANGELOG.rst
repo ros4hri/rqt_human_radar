@@ -2,6 +2,16 @@
 Changelog for package rqt_human_radar
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* linting
+* add support for ZoneOfInterest
+* add computation of 'isOn' relation
+* add context menu entry to move objects backward/forward
+* minor debugging code
+* extend template SVG map with zones and walls
+* Contributors: Séverin Lemaignan
+
 2.5.1 (2025-02-19)
 ------------------
 * Revert "svg template: escape parantheses in RDF class names"
