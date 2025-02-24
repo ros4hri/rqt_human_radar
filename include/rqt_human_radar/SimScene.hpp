@@ -18,6 +18,7 @@
 #include <memory>
 #include <map>
 #include <set>
+#include <vector>
 #include <string>
 #include <rclcpp/rclcpp.hpp>
 #include <hri/hri.hpp>
@@ -29,9 +30,9 @@
 namespace rqt_human_radar
 {
 
+typedef std::vector<const SemanticObject *> ObjectList;
+
 typedef std::tuple<std::string, std::string, std::string> Triple;
-const std::string isOn = "isOn";
-const std::string isIn = "isIn";
 
 class SimScene : public QGraphicsScene
 {
@@ -86,8 +87,7 @@ private:
    * - first, the list of objects *below* the object's bounding box
    * - second, the list of objects *above* the object's bounding box
    */
-  std::pair<std::vector<std::string>,
-    std::vector<std::string>> getIntersectingObjects(std::string objectID) const;
+  std::pair<ObjectList, ObjectList> getIntersectingObjects(std::string objectID) const;
 
   /** returns true if the target_object is visually above the qobject in the Qt
    * Graphics scene.

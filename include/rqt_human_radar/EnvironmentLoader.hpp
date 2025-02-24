@@ -32,8 +32,13 @@ public:
   void loadMap(rclcpp::Node::SharedPtr node, QGraphicsScene * scene, const std::string & filename);
 
 private:
+  void loadElements(
+    rclcpp::Node::SharedPtr node,
+    QDomElement & root, QGraphicsScene * scene, const std::string & default_class);
+
   QRectF getElementBounds(
-    rclcpp::Node::SharedPtr node, const std::string & elementId,
+    rclcpp::Node::SharedPtr node,
+    const std::string & elementId,
     const std::string & label);
 
   QSvgRenderer renderer_;

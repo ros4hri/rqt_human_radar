@@ -24,6 +24,12 @@
 namespace rqt_human_radar
 {
 
+
+const std::string IS_ON = "isOn";
+const std::string IS_IN = "isIn";
+const std::string ORO_OBJECT = "oro:Object";
+const std::string ORO_ZONE_OF_INTEREST = "oro:ZoneOfInterest";
+
 typedef std::tuple<std::string, std::string, std::string> Triple;
 
 /** @brief A semantic object in the simulation

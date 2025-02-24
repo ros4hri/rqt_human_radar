@@ -58,7 +58,7 @@ void InteractiveView::wheelEvent(QWheelEvent * event)
       }
     } else {
       // Zoom out
-      if (scaleFactor_ > 0.5) {
+      if (scaleFactor_ > 0.2) {
         scaleFactor_ /= scaleFactor;
         scale(1.0 / scaleFactor, 1.0 / scaleFactor);
       }

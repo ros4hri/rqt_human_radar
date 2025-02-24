@@ -34,9 +34,6 @@
 namespace rqt_human_radar
 {
 
-typedef std::vector<std::string> ObjectList;
-
-
 class LocalObjectItem : public SimItem, public SemanticObject
 {
   Q_OBJECT
@@ -59,6 +56,8 @@ public:
     bool randomize_id = false);
 
   ~LocalObjectItem();
+
+  void setStatic();
 
   int type() const override {return Type;}
 

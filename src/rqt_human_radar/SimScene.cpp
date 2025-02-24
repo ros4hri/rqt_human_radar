@@ -101,6 +101,12 @@ void SimScene::updateSpatialRelations()
       continue;
     }
 
+    // relations with zones of interest are computed by the objects
+    // in the zones themselves.
+    if (object->getClassname() == ORO_ZONE_OF_INTEREST) {
+      continue;
+    }
+
     ObjectList below, above;
     std::tie(below, above) = getIntersectingObjects(object->getId());
 
@@ -116,11 +122,19 @@ void SimScene::updateSpatialRelations()
 
 
     for (const auto & below_object : below) {
-      triples.insert({object->getId(), isOn, below_object});
+      if (below_object->getClassname() == ORO_ZONE_OF_INTEREST) {
+        triples.insert({object->getId(), IS_IN, below_object->getId()});
+      } else {
+        triples.insert({object->getId(), IS_ON, below_object->getId()});
+      }
     }
 
     for (const auto & above_object : above) {
-      triples.insert({above_object, isOn, object->getId()});
+      if (above_object->getClassname() == ORO_ZONE_OF_INTEREST) {
+        triples.insert({object->getId(), IS_IN, above_object->getId()});
+      } else {
+        triples.insert({above_object->getId(), IS_ON, object->getId()});
+      }
     }
 
   }
@@ -149,11 +163,10 @@ void SimScene::updateSpatialRelations()
   spatial_relations = triples;
 }
 
-std::pair<std::vector<std::string>,
-  std::vector<std::string>> SimScene::getIntersectingObjects(std::string objectID) const
+std::pair<ObjectList, ObjectList> SimScene::getIntersectingObjects(std::string objectID) const
 {
-  std::vector<std::string> underObjects;
-  std::vector<std::string> aboveObjects;
+  ObjectList underObjects;
+  ObjectList aboveObjects;
 
   QRectF target_object_rect;
   SimItem * target_object = nullptr;
@@ -201,9 +214,9 @@ std::pair<std::vector<std::string>,
     // Check if the bounding boxes intersect
     if (target_object_rect.intersects(object_rect)) {
       if (isAbove(qobject, target_object)) {
-        aboveObjects.push_back(sem_object->getId());
+        aboveObjects.push_back(sem_object);
       } else {
-        underObjects.push_back(sem_object->getId());
+        underObjects.push_back(sem_object);
       }
     }
   }

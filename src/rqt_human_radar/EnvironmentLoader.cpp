@@ -19,6 +19,8 @@
 #include "rqt_human_radar/SimScene.hpp"
 #include "rqt_human_radar/LocalObjectItem.hpp"
 
+#include "rqt_human_radar/SemanticObject.hpp"
+
 namespace rqt_human_radar
 {
 
@@ -43,30 +45,50 @@ void EnvironmentLoader::loadMap(
 
   renderer_.load(doc_.toString().toUtf8());
 
-  auto viewBox = renderer_.viewBoxF();
 
+  // Retrieve all static objects, ie SVG elements that:
+  // - are direct children of the SVG group with inkscape:label='static_objects'
+  // - whose own inkscape:label does not start with '_'
+
+  // get elementsByTag 'g' and only keep the one that has the label inkscape:label='static_objects' or 'zones'
+  QDomElement static_objects;
+  QDomElement zones_of_interest;
+  QDomElement walls;
+  QDomNodeList groups = doc_.elementsByTagName("g");
+
+  for (int i = 0; i < groups.size(); i++) {
+    QDomElement group = groups.at(i).toElement();
+    if (group.attribute("inkscape:label") == "static_objects") {
+      static_objects = group;
+    }
+    if (group.attribute("inkscape:label") == "zones") {
+      zones_of_interest = group;
+    }
+    if (group.attribute("inkscape:label") == "walls") {
+      walls = group;
+    }
+  }
+
+  loadElements(node, static_objects, scene, ORO_OBJECT);
+  loadElements(node, zones_of_interest, scene, ORO_ZONE_OF_INTEREST);
+  loadElements(node, walls, scene, "");
+
+}
+
+void EnvironmentLoader::loadElements(
+  rclcpp::Node::SharedPtr node,
+  QDomElement & root, QGraphicsScene * scene,
+  const std::string & default_class)
+{
+
+  auto viewBox = renderer_.viewBoxF();
   // (0,0) is the top-left corner of the SVG
   // we assume landscape orientation, with the robot at the middle of X=0 axis
   // as such:
   double yOrigin = viewBox.height() / 2;
   double xOrigin = 0;
 
-  // Retrieve all static objects, ie SVG elements that:
-  // - are direct children of the SVG group with inkscape:label='static_objects'
-  // - whose own inkscape:label does not start with '_'
-
-  // get elementsByTag 'g' and only keep the one that has the label inkscape:label='static_objects '
-  QDomElement static_objects;
-  QDomNodeList groups = doc_.elementsByTagName("g");
-  for (int i = 0; i < groups.size(); i++) {
-    QDomElement group = groups.at(i).toElement();
-    if (group.attribute("inkscape:label") == "static_objects") {
-      static_objects = group;
-      break;
-    }
-  }
-
-  for (auto obj = static_objects.firstChildElement();
+  for (auto obj = root.firstChildElement();
     !obj.isNull();
     obj = obj.nextSiblingElement())
   {
@@ -83,11 +105,44 @@ void EnvironmentLoader::loadMap(
       auto bounds = getElementBounds(node, elementId.toStdString(), name);
 
       LocalObjectItem * item;
-      if (classname.empty()) {
-        item = new LocalObjectItem(node, name, "oro:Object");
-      } else {
-        item = new LocalObjectItem(node, name, classname);
+
+
+      if (default_class.empty()) {
+        // if not default case, assume these SVG elements are
+        // purely visual, and do not have any semantic meaning
+        // in the simulation
+        //auto svg_item = new QGraphicsSvgItem();
+        //svg_item->setSharedRenderer(&renderer_);
+        //svg_item->setElementId(elementId);
+        //svg_item->setZValue(100);
+        //scene->addItem(svg_item);
+        //svg_item->setPos(
+        //  (bounds.center().x() - xOrigin) / 1000 * SimScene::pixelsPerMeter,
+        //  (bounds.center().y() - yOrigin) / 1000 * SimScene::pixelsPerMeter);
+        auto svg_item = new SimItem(node);
+        svg_item->setSharedRenderer(&renderer_);
+        svg_item->setElementId(elementId);
+        svg_item->setZValue(100);
+        svg_item->setPhysicalWidth(bounds.width() / 1000);
+        scene->addItem(svg_item);
+        svg_item->setPos(
+          (bounds.center().x() - xOrigin) / 1000 * SimScene::pixelsPerMeter,
+          (bounds.center().y() - yOrigin) / 1000 * SimScene::pixelsPerMeter);
+
+        continue;
       }
+      if (default_class == ORO_ZONE_OF_INTEREST) {
+        item = new LocalObjectItem(node, name, default_class);
+        item->setStatic();
+        item->setZValue(-100);
+      } else {
+        if (classname.empty()) {
+          item = new LocalObjectItem(node, name, default_class);
+        } else {
+          item = new LocalObjectItem(node, name, classname);
+        }
+      }
+
 
       item->setSharedRenderer(&renderer_);
       item->setElementId(elementId);
