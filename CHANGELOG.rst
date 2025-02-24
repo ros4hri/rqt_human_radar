@@ -2,8 +2,8 @@
 Changelog for package rqt_human_radar
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+2.6.0 (2025-02-24)
+------------------
 * linting
 * add support for ZoneOfInterest
 * add computation of 'isOn' relation
