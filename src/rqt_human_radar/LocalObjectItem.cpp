@@ -99,6 +99,9 @@ void LocalObjectItem::contextMenuEvent(QGraphicsSceneContextMenuEvent * event)
   QMenu menu;
   QAction * rdfEditAction = menu.addAction("Edit RDF properties");
   menu.addSeparator();
+  QAction * upAction = menu.addAction("Move up");
+  QAction * downAction = menu.addAction("Move down");
+  menu.addSeparator();
   QAction * deleteAction = menu.addAction("Delete");
 
   QAction * selectedAction = menu.exec(event->screenPos());
@@ -111,7 +114,10 @@ void LocalObjectItem::contextMenuEvent(QGraphicsSceneContextMenuEvent * event)
     if (rdfDialog->exec() == QDialog::Accepted) {
       updateStaticTriples(rdfDialog->getTriples());
     }
-
+  } else if (selectedAction == upAction) {
+    this->setZValue(this->zValue() + 1);
+  } else if (selectedAction == downAction) {
+    this->setZValue(this->zValue() - 1);
   } else if (selectedAction == deleteAction) {
     scene()->removeItem(this);
     delete this;
