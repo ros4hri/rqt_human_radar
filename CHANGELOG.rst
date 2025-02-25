@@ -2,8 +2,8 @@
 Changelog for package rqt_human_radar
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+2.8.0 (2025-02-25)
+------------------
 * ensure we can click on ZoI and get the context menu
   While here, improve the rendering of ZoI labels
 * Contributors: Séverin Lemaignan
