@@ -40,6 +40,7 @@ set(rqt_human_radar_SRCS
     src/rqt_human_radar/EnvironmentLoader.cpp
     src/rqt_human_radar/PersonItem.cpp
     src/rqt_human_radar/LocalObjectItem.cpp
+    src/rqt_human_radar/ZoneOfInterestItem.cpp
     src/rqt_human_radar/RemoteObjectItem.cpp
     src/rqt_human_radar/RemotePersonItem.cpp
     src/rqt_human_radar/LocalPersonItem.cpp
@@ -63,6 +64,7 @@ set(rqt_human_radar_HDRS
     # include/rqt_human_radar/SimItem.hpp
     # include/rqt_human_radar/PersonItem.hpp
     include/rqt_human_radar/LocalObjectItem.hpp
+    include/rqt_human_radar/ZoneOfInterestItem.hpp
     # include/rqt_human_radar/RemoteObjectItem.hpp
     # include/rqt_human_radar/RemotePersonItem.hpp
     # include/rqt_human_radar/LocalPersonItem.hpp

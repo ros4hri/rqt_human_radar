@@ -332,7 +332,9 @@ void SimScene::contextMenuEvent(QGraphicsSceneContextMenuEvent * event)
   if (itemAt(event->scenePos(), QTransform())) {
     // Let the item's context menu handle the event
     QGraphicsScene::contextMenuEvent(event);
-    return;
+    if (event->isAccepted()) {
+      return;
+    }
   }
 
 // Otherwise, show the scene's context menu

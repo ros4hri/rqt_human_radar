@@ -37,7 +37,7 @@ void SimItem::init()
   label_ = new QGraphicsSimpleTextItem();
   label_->setFlags(QGraphicsItem::ItemIgnoresTransformations);
   label_->setText("");
-  label_->setFont(QFont("Arial", 14));
+  label_->setFont(QFont("Arial", 12));
   label_->setParentItem(this);
   label_->show();
 }

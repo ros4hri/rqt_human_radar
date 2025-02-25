@@ -18,6 +18,7 @@
 #include "rqt_human_radar/EnvironmentLoader.hpp"
 #include "rqt_human_radar/SimScene.hpp"
 #include "rqt_human_radar/LocalObjectItem.hpp"
+#include "rqt_human_radar/ZoneOfInterestItem.hpp"
 
 #include "rqt_human_radar/SemanticObject.hpp"
 
@@ -103,29 +104,17 @@ void EnvironmentLoader::loadElements(
 
       auto bounds = getElementBounds(node, elementId.toStdString(), name);
 
-      LocalObjectItem * item;
+      SimItem * item;
 
 
       if (default_class.empty()) {
         // if not default case, assume these SVG elements are
         // purely visual, and do not have any semantic meaning
         // in the simulation
-        auto svg_item = new SimItem(node);
-        svg_item->setSharedRenderer(&renderer_);
-        svg_item->setElementId(elementId);
-        svg_item->setZValue(100);
-        svg_item->setPhysicalWidth(bounds.width() / 1000);
-        scene->addItem(svg_item);
-        svg_item->setPos(
-          (bounds.center().x() - xOrigin) / 1000 * SimScene::pixelsPerMeter,
-          (bounds.center().y() - yOrigin) / 1000 * SimScene::pixelsPerMeter);
-
-        continue;
-      }
-      if (default_class == ORO_ZONE_OF_INTEREST) {
-        item = new LocalObjectItem(node, name, default_class);
-        item->setStatic();
-        item->setZValue(-100);
+        item = new SimItem(node);
+        item->setZValue(100);
+      } else if (default_class == ORO_ZONE_OF_INTEREST) {
+        item = new ZoneOfInterestItem(node, name);
       } else {
         if (classname.empty()) {
           item = new LocalObjectItem(node, name, default_class);

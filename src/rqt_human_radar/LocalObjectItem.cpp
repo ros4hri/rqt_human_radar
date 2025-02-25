@@ -102,6 +102,8 @@ void LocalObjectItem::setStatic()
 void LocalObjectItem::contextMenuEvent(QGraphicsSceneContextMenuEvent * event)
 {
   if (getClassname() == ORO_ZONE_OF_INTEREST) {
+    RCLCPP_INFO(node_->get_logger(), "Skipping context menu of zone of interest");
+    event->ignore();
     return;
   }
 
