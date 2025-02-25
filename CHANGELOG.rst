@@ -2,8 +2,8 @@
 Changelog for package rqt_human_radar
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+2.7.0 (2025-02-25)
+------------------
 * increase the buffer size of /kb/add_fact and /kb/remove_fact to ensure we do not miss facts at load time
 * update spatial relation right after loading external SVG map
 * Contributors: Séverin Lemaignan
