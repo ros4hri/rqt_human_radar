@@ -2,6 +2,13 @@
 Changelog for package rqt_human_radar
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* linting
+* ensure spatial relations are also computed for simulated humans
+* optimize a little the computation of spatial updates
+* Contributors: Séverin Lemaignan
+
 2.8.0 (2025-02-25)
 ------------------
 * ensure we can click on ZoI and get the context menu
