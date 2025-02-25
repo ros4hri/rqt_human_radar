@@ -133,6 +133,7 @@ void LocalObjectItem::contextMenuEvent(QGraphicsSceneContextMenuEvent * event)
     dynamic_cast<SimScene *>(scene())->updateSpatialRelations();
   } else if (selectedAction == deleteAction) {
     scene()->removeItem(this);
+    dynamic_cast<SimScene *>(scene())->updateSpatialRelations();
     delete this;
   }
 }

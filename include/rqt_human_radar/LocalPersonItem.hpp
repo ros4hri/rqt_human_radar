@@ -49,6 +49,7 @@ public:
 protected:
   void contextMenuEvent(QGraphicsSceneContextMenuEvent * event) override;
   void mouseMoveEvent(QGraphicsSceneMouseEvent * event) override;
+  void mouseReleaseEvent(QGraphicsSceneMouseEvent * event) override;
   void wheelEvent(QGraphicsSceneWheelEvent * event) override;
 
 private:

@@ -339,6 +339,9 @@ void SimScene::contextMenuEvent(QGraphicsSceneContextMenuEvent * event)
       // Set its position to the mouse click location
       localItem->setPos(event->scenePos());
       addItem(localItem);
+
+      // Update the spatial relations
+      updateSpatialRelations();
     });
 
   menu.addAction(human_action);

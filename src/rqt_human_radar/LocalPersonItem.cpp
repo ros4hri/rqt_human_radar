@@ -59,6 +59,7 @@ void LocalPersonItem::contextMenuEvent(QGraphicsSceneContextMenuEvent * event)
   QAction * selectedAction = menu.exec(event->screenPos());
   if (selectedAction == deleteAction) {
     scene()->removeItem(this);
+    dynamic_cast<SimScene *>(scene())->updateSpatialRelations();
     delete this;
   }
 }
@@ -97,6 +98,13 @@ void LocalPersonItem::mouseMoveEvent(QGraphicsSceneMouseEvent * event)
 {
   QGraphicsSvgItem::mouseMoveEvent(event);
   scene()->update();
+}
+
+void LocalPersonItem::mouseReleaseEvent(QGraphicsSceneMouseEvent * event)
+{
+  QGraphicsSvgItem::mouseReleaseEvent(event);
+
+  dynamic_cast<SimScene *>(scene())->updateSpatialRelations();
 }
 
 void LocalPersonItem::wheelEvent(QGraphicsSceneWheelEvent * event)
