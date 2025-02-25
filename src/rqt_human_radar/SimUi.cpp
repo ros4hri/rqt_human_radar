@@ -96,6 +96,7 @@ SimUi::SimUi(QWidget * parent, rclcpp::Node::SharedPtr node)
         this,
         tr("Open SVG environment"), "", "SVG environment (*.svg)");
       environment_loader_.loadMap(node_, scene, fileName.toStdString());
+      scene->updateSpatialRelations();
     });
 
   connect(
