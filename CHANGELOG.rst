@@ -2,6 +2,12 @@
 Changelog for package rqt_human_radar
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* increase the buffer size of /kb/add_fact and /kb/remove_fact to ensure we do not miss facts at load time
+* update spatial relation right after loading external SVG map
+* Contributors: Séverin Lemaignan
+
 2.6.0 (2025-02-24)
 ------------------
 * linting
