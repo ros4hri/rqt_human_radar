@@ -68,10 +68,14 @@ SimScene::SimScene(rclcpp::Node::SharedPtr node)
   addItem(robotItem);
   robotItem->setPhysicalWidth(0.2);  // 20cm
 
+  // Define QoS profile with Reliable reliability policy
+  rclcpp::QoS qos_profile(100);  // History depth of 10
+  qos_profile.reliability(RMW_QOS_POLICY_RELIABILITY_RELIABLE);
+
   kb_add_pub_ =
-    node_->create_publisher<std_msgs::msg::String>("/kb/add_fact", 10);
+    node_->create_publisher<std_msgs::msg::String>("/kb/add_fact", qos_profile);
   kb_remove_pub_ =
-    node_->create_publisher<std_msgs::msg::String>("/kb/remove_fact", 10);
+    node_->create_publisher<std_msgs::msg::String>("/kb/remove_fact", qos_profile);
 
 
   updateTimer_ = new QTimer(this);
