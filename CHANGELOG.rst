@@ -2,8 +2,8 @@
 Changelog for package rqt_human_radar
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+2.9.0 (2025-02-25)
+------------------
 * linting
 * ensure spatial relations are also computed for simulated humans
 * optimize a little the computation of spatial updates
