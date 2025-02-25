@@ -89,7 +89,7 @@ private:
    * - first, the list of objects *below* the object's bounding box
    * - second, the list of objects *above* the object's bounding box
    */
-  std::pair<ObjectList, ObjectList> getIntersectingObjects(std::string objectID) const;
+  std::pair<ObjectList, ObjectList> getIntersectingObjects(const SimItem * target_object) const;
 
   /** returns true if the target_object is visually above the qobject in the Qt
    * Graphics scene.

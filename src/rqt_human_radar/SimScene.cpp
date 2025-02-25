@@ -98,19 +98,24 @@ void SimScene::updateSpatialRelations()
   std::set<Triple> triples;
 
   for (const auto item : items()) {
-    LocalObjectItem * object = dynamic_cast<LocalObjectItem *>(item);
+    SimItem * object = dynamic_cast<SimItem *>(item);
     if (!object) {
+      continue;
+    }
+
+    SemanticObject * sem_object = dynamic_cast<SemanticObject *>(item);
+    if (!sem_object) {
       continue;
     }
 
     // relations with zones of interest are computed by the objects
     // in the zones themselves.
-    if (object->getClassname() == ORO_ZONE_OF_INTEREST) {
+    if (sem_object->getClassname() == ORO_ZONE_OF_INTEREST) {
       continue;
     }
 
     ObjectList below, above;
-    std::tie(below, above) = getIntersectingObjects(object->getId());
+    std::tie(below, above) = getIntersectingObjects(object);
 
 
     // iterate over all objects below this object
@@ -125,17 +130,17 @@ void SimScene::updateSpatialRelations()
 
     for (const auto & below_object : below) {
       if (below_object->getClassname() == ORO_ZONE_OF_INTEREST) {
-        triples.insert({object->getId(), IS_IN, below_object->getId()});
+        triples.insert({sem_object->getId(), IS_IN, below_object->getId()});
       } else {
-        triples.insert({object->getId(), IS_ON, below_object->getId()});
+        triples.insert({sem_object->getId(), IS_ON, below_object->getId()});
       }
     }
 
     for (const auto & above_object : above) {
       if (above_object->getClassname() == ORO_ZONE_OF_INTEREST) {
-        triples.insert({object->getId(), IS_IN, above_object->getId()});
+        triples.insert({sem_object->getId(), IS_IN, above_object->getId()});
       } else {
-        triples.insert({above_object->getId(), IS_ON, object->getId()});
+        triples.insert({above_object->getId(), IS_ON, sem_object->getId()});
       }
     }
   }
@@ -164,30 +169,14 @@ void SimScene::updateSpatialRelations()
   spatial_relations = triples;
 }
 
-std::pair<ObjectList, ObjectList> SimScene::getIntersectingObjects(std::string objectID) const
+std::pair<ObjectList,
+  ObjectList> SimScene::getIntersectingObjects(const SimItem * target_object) const
 {
   ObjectList underObjects;
   ObjectList aboveObjects;
 
-  QRectF target_object_rect;
-  SimItem * target_object = nullptr;
-
-  // Retrieve the object whose getIt() matches the input objectID
-  for (auto item : items()) {
-    auto sem_object = dynamic_cast<SemanticObject *>(item);
-    if (!sem_object) {
-      continue;
-    }
-
-    if (sem_object->getId() == objectID) {
-      target_object = dynamic_cast<SimItem *>(item);
-      if (target_object) {
-        target_object_rect =
-          target_object->mapToScene(target_object->boundingRect()).boundingRect();
-        break;
-      }
-    }
-  }
+  QRectF target_object_rect =
+    target_object->mapToScene(target_object->boundingRect()).boundingRect();
 
   if (target_object_rect.isNull()) {
     return std::make_pair(underObjects, aboveObjects);
