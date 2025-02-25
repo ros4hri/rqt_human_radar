@@ -2,6 +2,12 @@
 Changelog for package rqt_human_radar
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* ensure we can click on ZoI and get the context menu
+  While here, improve the rendering of ZoI labels
+* Contributors: Séverin Lemaignan
+
 2.7.0 (2025-02-25)
 ------------------
 * increase the buffer size of /kb/add_fact and /kb/remove_fact to ensure we do not miss facts at load time
