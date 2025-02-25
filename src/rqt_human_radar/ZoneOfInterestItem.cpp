@@ -58,7 +58,6 @@ void ZoneOfInterestItem::init()
   font.setPointSize(14);
   label_->setFont(font);
   label_->setOpacity(0.4);
-
 }
 
 ZoneOfInterestItem::~ZoneOfInterestItem()
@@ -67,7 +66,6 @@ ZoneOfInterestItem::~ZoneOfInterestItem()
 
 QRectF ZoneOfInterestItem::boundingRect() const
 {
-
   auto bb = SimItem::boundingRect();
 
   label_->setPos(
