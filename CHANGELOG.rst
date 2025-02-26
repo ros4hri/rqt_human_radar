@@ -2,8 +2,8 @@
 Changelog for package rqt_human_radar
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+2.9.1 (2025-02-26)
+------------------
 * fix segfault when deleting a simulated objects or person
 * Contributors: Séverin Lemaignan
 
