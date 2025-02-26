@@ -2,6 +2,11 @@
 Changelog for package rqt_human_radar
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* fix segfault when deleting a simulated objects or person
+* Contributors: Séverin Lemaignan
+
 2.9.0 (2025-02-25)
 ------------------
 * linting
