@@ -58,9 +58,10 @@ void LocalPersonItem::contextMenuEvent(QGraphicsSceneContextMenuEvent * event)
   QAction * deleteAction = menu.addAction("Delete");
   QAction * selectedAction = menu.exec(event->screenPos());
   if (selectedAction == deleteAction) {
+    auto simscene = dynamic_cast<SimScene *>(scene());
     scene()->removeItem(this);
-    dynamic_cast<SimScene *>(scene())->updateSpatialRelations();
     delete this;
+    simscene->updateSpatialRelations();
   }
 }
 

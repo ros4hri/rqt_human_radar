@@ -110,8 +110,8 @@ void LocalObjectItem::contextMenuEvent(QGraphicsSceneContextMenuEvent * event)
   QMenu menu;
   QAction * rdfEditAction = menu.addAction("Edit RDF properties");
   menu.addSeparator();
-  QAction * upAction = menu.addAction("Move up");
-  QAction * downAction = menu.addAction("Move down");
+  QAction * upAction = menu.addAction("Bring up");
+  QAction * downAction = menu.addAction("Bring down");
   menu.addSeparator();
   QAction * deleteAction = menu.addAction("Delete");
 
@@ -132,9 +132,10 @@ void LocalObjectItem::contextMenuEvent(QGraphicsSceneContextMenuEvent * event)
     this->setZValue(this->zValue() - 1);
     dynamic_cast<SimScene *>(scene())->updateSpatialRelations();
   } else if (selectedAction == deleteAction) {
+    auto simscene = dynamic_cast<SimScene *>(scene());
     scene()->removeItem(this);
-    dynamic_cast<SimScene *>(scene())->updateSpatialRelations();
     delete this;
+    simscene->updateSpatialRelations();
   }
 }
 
