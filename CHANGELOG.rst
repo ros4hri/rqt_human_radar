@@ -2,6 +2,11 @@
 Changelog for package rqt_human_radar
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* ament_auto_package now requires USE_SCOPED_HEADER_INSTALL_DIR
+* Contributors: Séverin Lemaignan
+
 2.9.1 (2025-02-26)
 ------------------
 * fix segfault when deleting a simulated objects or person
